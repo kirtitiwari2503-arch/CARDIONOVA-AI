@@ -1,19 +1,16 @@
 import pandas as pd
-import pickle
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
+import joblib
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# Load dataset
-data = pd.read_csv("data/cardio_processed.csv")
+# Load data (Make sure 'data' is defined above or read from csv)
+data = pd.read_csv("data/cardio_processed.csv") 
 
 # Create X and y
 X = data.drop("cardio", axis=1)
 y = data["cardio"]
 
-# Load trained model
-with open("models/cardio_model.pkl", "rb") as file:
-    model = pickle.load(file)
+# Load trained model safely using joblib
+model = joblib.load("models/cardio_model.pkl")
 
 # Predictions
 y_pred = model.predict(X)
@@ -30,16 +27,7 @@ report = classification_report(y, y_pred)
 # Save results
 with open("reports/model_results.txt", "w") as f:
     f.write(f"Accuracy Score: {accuracy}\n\n")
-    f.write("Confusion Matrix:\n")
-    f.write(str(cm))
-    f.write("\n\nClassification Report:\n")
-    f.write(report)
+    f.write(f"Confusion Matrix:\n{cm}\n\n")
+    f.write(f"Classification Report:\n{report}\n")
 
-# Print results
-print("Model Evaluation Completed")
-print("Accuracy:", accuracy)
-print("\nConfusion Matrix:")
-print(cm)
-print("\nClassification Report:")
-print(report)
-print("\nResults saved in reports/model_results.txt")
+print("✅ Model evaluation completed and results saved!")
